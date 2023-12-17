@@ -5,7 +5,7 @@ import { Button, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 // Internal import
-import bancoDigitalImage from '../../assets/images/banco_digital.jpg'; // Update the image path
+import bancoDigitalImage from '../../assets/images/BancoDigital.png'; 
 import { NavBar } from '../sharedComponents';
 
 // Defining the component props

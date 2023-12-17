@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "wallet-project",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

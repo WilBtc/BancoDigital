@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "react-scripts build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  }  
-  ,"dependencies": {
+    "preview": "vite preview",
+    "start": "react-scripts start"
+  },
+  "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.19",
@@ -39,6 +40,17 @@
     "eslint-plugin-react-refresh": "^0.4.4",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
-  
 }

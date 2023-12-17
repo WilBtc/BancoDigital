@@ -1,15 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
-import { useState } from 'react'; 
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth'; 
+import { useState } from 'react';
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import {
     onAuthStateChanged,
     getAuth,
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword 
-} from 'firebase/auth'; 
-import { SubmitHandler, useForm } from 'react-hook-form'; 
-import { useNavigate } from 'react-router-dom'; 
+    signInWithEmailAndPassword,
+    User
+} from 'firebase/auth';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Button,
@@ -20,14 +20,12 @@ import {
     CircularProgress,
     Dialog,
     DialogContent,
-    Alert 
-} from '@mui/material'; 
+    Alert
+} from '@mui/material';
 
-// internal imports
 import { NavBar, InputText, InputPassword } from '../sharedComponents';
-import bankImage from '../../assets/images/bank.jpg'; 
+import bankImage from '../../assets/images/BancoDigital.png';
 
-// creating our dictionary/object for our css styling 
 const authStyles = {
     main: {
         backgroundImage: `linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .5)), url(${bankImage});`,
@@ -35,7 +33,7 @@ const authStyles = {
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center top 5px', 
+        backgroundPosition: 'center top 5px',
         position: 'absolute',
         marginTop: '10px'
     },
@@ -52,7 +50,6 @@ const authStyles = {
     }
 };
 
-// creating our interfaces 
 interface Props {
     title: string;
 }
@@ -67,10 +64,8 @@ interface SubmitProps {
     password: string;
 }
 
-// creating a literal union type for our different alerts 
 export type MessageType = 'error' | 'warning' | 'info' | 'success';
 
-// create a google button component
 const GoogleButton: React.FC<ButtonProps> = (_props) => {
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState<string>();
@@ -82,15 +77,22 @@ const GoogleButton: React.FC<ButtonProps> = (_props) => {
     const signIn = async () => {
         await signInWithGoogle();
 
-        localStorage.setItem('auth', 'true');
+        if (loading) {
+            return <CircularProgress />;
+        }
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                localStorage.setItem('user', user.email || "");
-                localStorage.setItem('uuid', user.uid || "");
-                setMessage(`Successfully logged in ${user.email}`);
-                setMessageType('success');
-                setOpen(true);
-                setTimeout(() => { navigate('/dashboard') }, 2000);
+                user.getIdToken().then(accessToken => {
+                    console.log("AccessToken:", accessToken);
+                    localStorage.setItem('auth', 'true');
+                    localStorage.setItem('user', user.email || "");
+                    localStorage.setItem('uuid', user.uid || "");
+                    setMessage(`Successfully logged in ${user.email}`);
+                    setMessageType('success');
+                    setOpen(true);
+                    setTimeout(() => { navigate('/dashboard') }, 2000);
+                });
             }
         });
 
@@ -98,10 +100,6 @@ const GoogleButton: React.FC<ButtonProps> = (_props) => {
             setMessage(error.message);
             setMessageType('error');
             setOpen(true);
-        }
-
-        if (loading) {
-            return <CircularProgress />;
         }
     };
 
@@ -141,22 +139,20 @@ const SignIn: React.FC = () => {
         if (event) event.preventDefault();
 
         signInWithEmailAndPassword(auth, data.email, data.password)
-            .then((_userCredential) => {
-                localStorage.setItem('auth', 'true');
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        localStorage.setItem('user', user.email || "");
-                        localStorage.setItem('uuid', user.uid || "");
-                        setMessage(`Successfully logged in ${user.email}`);
-                        setMessageType('success');
-                        setOpen(true);
-                        setTimeout(() => { navigate('/dashboard') }, 2000);
-                    }
+            .then((userCredential) => {
+                userCredential.user.getIdToken().then(accessToken => {
+                    console.log("AccessToken:", accessToken);
+                    localStorage.setItem('auth', 'true');
+                    localStorage.setItem('user', userCredential.user.email || "");
+                    localStorage.setItem('uuid', userCredential.user.uid || "");
+                    setMessage(`Successfully logged in ${userCredential.user.email}`);
+                    setMessageType('success');
+                    setOpen(true);
+                    navigate('/dashboard');
                 });
             })
             .catch((error) => {
-                const errorMessage = error.message;
-                setMessage(errorMessage);
+                setMessage(error.message);
                 setMessageType('error');
                 setOpen(true);
             });
@@ -199,22 +195,20 @@ const SignUp: React.FC = () => {
         if (event) event.preventDefault();
 
         createUserWithEmailAndPassword(auth, data.email, data.password)
-            .then((_userCredential) => {
-                localStorage.setItem('auth', 'true');
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        localStorage.setItem('user', user.email || "");
-                        localStorage.setItem('uuid', user.uid || "");
-                        setMessage(`Successfully logged in ${user.email}`);
-                        setMessageType('success');
-                        setOpen(true);
-                        setTimeout(() => { navigate('/dashboard') }, 2000);
-                    }
+            .then((userCredential) => {
+                userCredential.user.getIdToken().then(accessToken => {
+                    console.log("AccessToken:", accessToken);
+                    localStorage.setItem('auth', 'true');
+                    localStorage.setItem('user', userCredential.user.email || "");
+                    localStorage.setItem('uuid', userCredential.user.uid || "");
+                    setMessage(`Successfully created account and logged in as ${userCredential.user.email}`);
+                    setMessageType('success');
+                    setOpen(true);
+                    navigate('/dashboard');
                 });
             })
             .catch((error) => {
-                const errorMessage = error.message;
-                setMessage(errorMessage);
+                setMessage(error.message);
                 setMessageType('error');
                 setOpen(true);
             });

@@ -1,23 +1,31 @@
-// src/Theme/themes.ts
-import { createTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import { DefaultTheme } from 'styled-components';
 
-export const theme = createTheme({
-  typography: {
-    fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
-  },
+const muiTheme = createTheme({
   palette: {
     primary: {
-      main: '#1E1F3A', // Dark Blue
+      main: '#ADD8E6', // Light Blue
     },
     secondary: {
-      main: '#FFFFFF', // White
-      light: '#4E5A6E', // Light Blue
-    },
-    info: {
-      main: '#007BFF', // Accent color
+      main: '#00008B', // Dark Blue
     },
     background: {
-      default: '#FFFFFF', // White background
+      default: '#FFFFFF', // White
+    },
+    text: {
+      primary: '#000000', // Black for text/letters
     },
   },
 });
+
+const theme: DefaultTheme = {
+  ...muiTheme,
+  colors: {
+    primary: '#ADD8E6', // Light Blue
+    secondary: '#00008B', // Dark Blue
+    background: '#FFFFFF', // White
+    text: '#000000', // Black for text/letters
+  }
+};
+
+export default theme;
